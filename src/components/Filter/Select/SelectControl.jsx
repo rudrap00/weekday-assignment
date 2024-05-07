@@ -1,13 +1,18 @@
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { addFilter, removeFilter } from "../../../app/jobs/jobSlice";
 
 const SelectControl = ({ data }) => {
-  const [value, setValue] = useState("");
+  const selectRef = useRef("");
   const { id, label, items, width } = data;
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { value } = e.target;
-    setValue(value);
+    if (!value) dispatch(removeFilter(id));
+    else dispatch(addFilter({ key: id, value }));
+    selectRef.current = value;
   };
 
   return (
@@ -23,7 +28,7 @@ const SelectControl = ({ data }) => {
           <Select
             id={id}
             variant="outlined"
-            value={value}
+            value={selectRef.current}
             label={label}
             onChange={handleChange}
           >

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "./components/Card/Card";
 import FilterBar from "./components/Filter/FilterBar";
@@ -7,8 +7,19 @@ import useInfiniteScroll from "./hooks/useInfiniteScroll";
 
 const App = () => {
   const [pageNum, setPageNum] = useState(0);
-  const { data } = useSelector((state) => state.jobs);
-  const { loading, hasMore } = useInfiniteScroll(pageNum);
+  const { data, filter } = useSelector((state) => state.jobs);
+  const { loading, hasMore } = useInfiniteScroll(pageNum, filter);
+
+  useEffect(() => {
+    setPageNum(0);
+  }, [filter]);
+
+  useEffect(() => {
+    console.log(loading, hasMore, data.length, pageNum);
+    if (!loading && hasMore && data.length === 0) {
+      setPageNum((page) => page + 1);
+    }
+  }, [loading]);
 
   const observer = useRef();
   const lastElementRef = useCallback(
@@ -34,7 +45,10 @@ const App = () => {
             return <Card ref={lastElementRef} key={item.jdUid} data={item} />;
           return <Card key={item.jdUid} data={item} />;
         })}
-        {loading && <Loading />}
+        {(loading || hasMore) && <Loading />}
+        {!hasMore && data.length === 0 && pageNum > 1 && (
+          <div>No jobs found</div>
+        )}
       </div>
     </div>
   );
