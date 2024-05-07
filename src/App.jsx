@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "./components/Card/Card";
+import FilterBar from "./components/Filter/FilterBar";
 import Loading from "./components/Loading/Loading";
 import useInfiniteScroll from "./hooks/useInfiniteScroll";
 
@@ -25,13 +26,16 @@ const App = () => {
   );
 
   return (
-    <div className="products-container">
-      {data.map((item, index) => {
-        if (index + 1 === data.length)
-          return <Card ref={lastElementRef} key={item.jdUid} data={item} />;
-        return <Card key={item.jdUid} data={item} />;
-      })}
-      {loading && <Loading />}
+    <div className="App">
+      <FilterBar />
+      <div className="products-container">
+        {data.map((item, index) => {
+          if (index + 1 === data.length)
+            return <Card ref={lastElementRef} key={item.jdUid} data={item} />;
+          return <Card key={item.jdUid} data={item} />;
+        })}
+        {loading && <Loading />}
+      </div>
     </div>
   );
 };
