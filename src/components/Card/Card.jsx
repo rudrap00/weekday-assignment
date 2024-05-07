@@ -1,7 +1,8 @@
+import { forwardRef } from "react";
 import styles from "./Card.module.scss";
 import salaryStructure from "./constants";
 
-const Card = ({ data }) => {
+const Card = forwardRef((props, ref) => {
   const {
     companyName,
     jdLink,
@@ -14,12 +15,12 @@ const Card = ({ data }) => {
     minExp,
     maxExp,
     logoUrl,
-  } = data;
+  } = props.data;
 
   const salaryString = salaryStructure(minSalary, maxSalary);
 
   return (
-    <div className={styles["card-container"]}>
+    <div ref={ref} className={styles["card-container"]}>
       <div className={styles.header}>
         <div className={styles["img-container"]}>
           <img src={logoUrl} alt="company-logo" loading="lazy" />
@@ -57,6 +58,6 @@ const Card = ({ data }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Card;

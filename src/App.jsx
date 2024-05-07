@@ -1,40 +1,35 @@
-import { useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import Card from "./components/Card/Card";
+import useInfiniteScroll from "./hooks/useInfiniteScroll";
 
 const App = () => {
-  const [data, setData] = useState([]);
+  const [pageNum, setPageNum] = useState(0);
+  const { data } = useSelector((state) => state.jobs);
+  const { loading, hasMore } = useInfiniteScroll(pageNum);
 
-  useEffect(() => {
-    (async () => {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-
-      const body = JSON.stringify({
-        limit: 24,
-        offset: 0,
+  const observer = useRef();
+  const lastElementRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore)
+          setPageNum((prevPage) => prevPage + 1);
       });
 
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body,
-      };
-
-      const res = await fetch(
-        "https://api.weekday.technology/adhoc/getSampleJdJSON",
-        requestOptions
-      );
-      const fetchData = await res.json();
-
-      setData(fetchData.jdList);
-    })();
-  }, []);
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
   return (
     <div className="products-container">
-      {data.map((item) => (
-        <Card key={item.jdUid} data={item} />
-      ))}
+      {data.map((item, index) => {
+        if (index + 1 === data.length)
+          return <Card ref={lastElementRef} key={item.jdUid} data={item} />;
+        return <Card key={item.jdUid} data={item} />;
+      })}
     </div>
   );
 };
