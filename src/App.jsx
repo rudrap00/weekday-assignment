@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Card from "./components/Card/Card";
+import Loading from "./components/Loading/Loading";
 import useInfiniteScroll from "./hooks/useInfiniteScroll";
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
           return <Card ref={lastElementRef} key={item.jdUid} data={item} />;
         return <Card key={item.jdUid} data={item} />;
       })}
+      {loading && <Loading />}
     </div>
   );
 };
