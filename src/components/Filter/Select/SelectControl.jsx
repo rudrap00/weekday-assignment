@@ -10,8 +10,8 @@ const SelectControl = ({ data }) => {
 
   const handleChange = (e) => {
     const { value } = e.target;
-    if (!value) dispatch(removeFilter(id));
-    else dispatch(addFilter({ key: id, value }));
+    if (value) dispatch(addFilter({ key: id, value }));
+    else dispatch(removeFilter(id));
     selectRef.current = value;
   };
 

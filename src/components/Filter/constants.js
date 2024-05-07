@@ -20,6 +20,18 @@ const filters = [
     items: ["delhi ncr", "mumbai", "remote", "chennai", "bangalore"],
     width: 8,
   },
+  {
+    id: "companyName",
+    label: "Company Name",
+    type: "text",
+    width: 12,
+  },
+  {
+    id: "minJdSalary",
+    label: "Min Base Pay (in K)",
+    type: "number",
+    width: 12,
+  },
 ];
 
 export default filters;

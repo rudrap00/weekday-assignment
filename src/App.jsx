@@ -8,14 +8,16 @@ import useInfiniteScroll from "./hooks/useInfiniteScroll";
 const App = () => {
   const [pageNum, setPageNum] = useState(0);
   const { data, filter } = useSelector((state) => state.jobs);
-  const { loading, hasMore } = useInfiniteScroll(pageNum, filter);
+  const { loading, hasMore, setHasMore } = useInfiniteScroll(pageNum, filter);
 
   useEffect(() => {
-    setPageNum(0);
+    return () => {
+      setPageNum(0);
+      setHasMore(false);
+    };
   }, [filter]);
 
   useEffect(() => {
-    console.log(loading, hasMore, data.length, pageNum);
     if (!loading && hasMore && data.length === 0) {
       setPageNum((page) => page + 1);
     }

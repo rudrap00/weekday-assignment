@@ -8,37 +8,42 @@ export const jobSlice = createSlice({
   },
   reducers: {
     fetchData: (state, action) => {
-      const filter = state.filter;
       const arr = action.payload;
-
+      const filter = state.filter;
       if (filter.length > 0) {
         state.data = [
           ...state.data,
-          ...arr.filter((job) =>
-            filter.reduce(
-              (acc, { key, value }) => acc && job[key] === value,
-              true
-            )
+          ...arr.filter((item) =>
+            filter.reduce((acc, { key, value, type }) => {
+              if (type) {
+                if (type === "text")
+                  return (
+                    acc &&
+                    item[key].toLowerCase().startsWith(value.toLowerCase())
+                  );
+                else return acc && item[key] >= +value;
+              } else return acc && item[key] === value;
+            }, true)
           ),
         ];
-      } else state.data = [...state.data, ...action.payload];
+      } else state.data = [...state.data, ...arr];
     },
     addFilter: (state, action) => {
       const { key } = action.payload;
-      const selectedFilter = state.filter.find((item) => item.key === key);
+      const filterData = state.filter.find((item) => item.key === key);
 
       state.data = [];
 
-      if (selectedFilter) {
+      if (filterData)
         state.filter = state.filter.map((item) => {
           if (item.key === key) return action.payload;
           else return item;
         });
-      } else state.filter = [...state.filter, action.payload];
+      else state.filter = [...state.filter, action.payload];
     },
     removeFilter: (state, action) => {
       state.data = [];
-      state.filter = state.filter.filter((item) => item.key !== action.payload);
+      state.filter = state.filter.filter(({ key }) => key !== action.payload);
     },
   },
 });
